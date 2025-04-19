@@ -6,9 +6,8 @@ import { ThemeProvider } from "@/components/theme-provider"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata = {
-  title: "Lovevbel - MCU Timeline Explorer",
+  title: "MCU Timeline Explorer",
   description: "Untangling Universes, One Story at a Time",
-    generator: 'v0.dev'
 }
 
 export default function RootLayout({
