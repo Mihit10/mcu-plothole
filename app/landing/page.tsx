@@ -1,16 +1,16 @@
 // "use client"
 
 import SplineModel from "./spline";
-import CardGrid from "@/components/test-card";
+import Home from "./home";
 
 export default function LandingPage() {
   return (
-    <main className="h-full w-full relative">
-      <div className="w-full">
+    <main >
+      <div >
         <SplineModel />
       </div>
-      
-        <CardGrid />
+      <Home/>
+        
      
     </main>
   );
