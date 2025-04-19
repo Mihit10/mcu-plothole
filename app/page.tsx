@@ -61,7 +61,7 @@ export default function HomePage() {
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ duration: 0.5 }}
               >
-                LOVEVBEL
+                PLOTHOLES
               </motion.h1>
 
               <div className="flex items-center gap-4">

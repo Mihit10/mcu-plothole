@@ -2,6 +2,7 @@ export interface Event {
   id: string
   title: string
   year: number
+  month: number
   description: string
   location: string
   characters: string[]
