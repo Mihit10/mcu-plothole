@@ -1,5 +1,6 @@
 "use client"
 import MCUGraph from '@/components/main-graph';
+import MainQuery from '@/components/main-query';
 
 // Your page component
 export default function GraphPage() {
@@ -2284,6 +2285,7 @@ export default function GraphPage() {
   return (
     <div className="p-4">
       <MCUGraph data={graphData} className="w-full" />
+      <MainQuery />
     </div>
   );
 }
