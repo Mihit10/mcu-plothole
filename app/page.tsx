@@ -209,12 +209,14 @@ export default function HomePage() {
             </TabsContent>
 
             <TabsContent value="knowledge" className="flex-1 p-6 pt-4 overflow-auto">
-              <KnowledgeGraph
-                characters={mockCharacters}
-                events={filteredEvents}
-                selectedCharacter={selectedCharacter}
-                onSelectCharacter={setSelectedCharacter}
-              />
+            <KnowledgeGraph
+            characters={mockCharacters}
+            events={filteredEvents}
+            selectedCharacter={selectedCharacter}
+            onSelectCharacter={setSelectedCharacter}
+            selectedYear={selectedYear} // ✅ Add this
+          />
+
             </TabsContent>
 
             <TabsContent value="canon" className="flex-1 p-6 pt-4 overflow-auto">
