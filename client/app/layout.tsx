@@ -2,6 +2,8 @@ import type React from "react"
 import "@/app/globals.css"
 import { Inter } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
+import Header from "./Header"
+import Footer from "./Footer"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -23,9 +25,17 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className={inter.className}>
+      <body className={`min-h-screen flex flex-col ${inter.className}`}>
         <ThemeProvider attribute="class" defaultTheme="dark">
-          {children}
+          
+          <Header />
+
+          <main className="flex-1 w-full px-4 py-6 mt-16">
+            {children}
+          </main>
+
+          <Footer />
+
         </ThemeProvider>
       </body>
     </html>

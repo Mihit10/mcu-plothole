@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import type { Event } from "@/lib/types"
 import { cn } from "@/lib/utils"
+import { useEffect, useState } from "react"
 
 interface EventCardProps {
   event: Event
@@ -13,7 +14,30 @@ interface EventCardProps {
   isHighlighted: boolean
 }
 
+// Define image paths
+const images = [
+  "/img/f1.jpg",
+  "/img/f2.jpg",
+  "/img/f3.jpg",
+  "/img/f4.jpg",
+  "/img/f5.jpg",
+];
+
+// Function to get a random image from the array
+const getRandomImage = () => {
+  const randomIndex = Math.floor(Math.random() * images.length);
+  return images[randomIndex];
+}
+
 export default function EventCard({ event, onCharacterClick, isHighlighted }: EventCardProps) {
+  // State to hold the randomly assigned image for this card
+  const [randomImage, setRandomImage] = useState("");
+  
+  // Assign a random image when the component mounts
+  // useEffect(() => {
+  //   setRandomImage(getRandomImage());
+  // }, []);
+
   // Determine the border color based on the event type
   const getBorderColor = () => {
     switch (event.type) {
@@ -61,7 +85,7 @@ export default function EventCard({ event, onCharacterClick, isHighlighted }: Ev
       {/* Event image */}
       <div
         className="h-48 bg-cover bg-center relative"
-        style={{ backgroundImage: `url(${event.image || "/placeholder.svg?height=300&width=500"})` }}
+        style={{ backgroundImage: `url(${event.image || randomImage || "/placeholder.svg?height=300&width=500"})` }}
       >
         <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 to-transparent"></div>
 

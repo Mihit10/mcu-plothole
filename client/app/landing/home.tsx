@@ -31,7 +31,7 @@ export default function Home() {
   }, []);
 
   const handleMarvelClick = () => {
-    router.push("/marvel")
+    router.push("/graph")
   }
 
   // Handle search input change
@@ -69,7 +69,7 @@ export default function Home() {
           <div className="p-4  bg-[#598bd9]">
           <div className="flex justify-center w-full">
               <div className="inline-block bg-yellow-300 px-6 py-2 rounded-lg border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-2">
-                <h1 className="text-4xl font-bold text-center text-black" style={{ fontFamily: "'Bangers', cursive" }}>The Multiversal Tracker</h1>
+                <h1 className="text-4xl font-bold text-center text-black" style={{ fontFamily: "'Bangers', cursive" }}>The Multiverse Tracker</h1>
               </div>
             </div>
             <div className="max-w-md mx-auto mt-4">
@@ -113,7 +113,7 @@ export default function Home() {
                   <div className="p-6 flex flex-col items-center justify-center">
                     <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-black mb-6 bg-white">
                       <img
-                        src="/placeholder.svg"
+                        src="/img/hp.jpg"
                         alt="Harry Potter"
                         className="w-full h-full object-cover opacity-70"
                       />
@@ -165,9 +165,9 @@ export default function Home() {
                   <div className="p-6 flex flex-col items-center justify-center cursor-pointer">
                     <div className="w-40 h-40 rounded-full overflow-hidden border-2 border-black mb-6 bg-white">
                       <img
-                        src="/placeholder.svg"
+                        src="/img/m.jpg"
                         alt="Marvel"
-                        className="w-full h-full object-cover"
+                        className="w-[200px] h-[150px] object-cover"
                       />
                     </div>
                     <p className="text-center mb-8 font-bold text-black">MCU Character Universe Tracker</p>
@@ -203,7 +203,7 @@ export default function Home() {
                   <div className="p-6 flex flex-col items-center justify-center">
                     <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-black mb-6 bg-white">
                       <img
-                        src="/placeholder.svg"
+                        src="/img/got.jpg"
                         alt="Game of Thrones"
                         className="w-full h-full object-cover opacity-70"
                       />
