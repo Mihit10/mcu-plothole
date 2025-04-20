@@ -55,17 +55,17 @@ export default function Home() {
 
   return (
     <main 
-      className="min-h-screen flex justify-center items-center bg-[#598bd9] overflow-hidden" 
+      className="min-h-screen flex justify-center items-center bg-blue-400 overflow-hidden" 
       style={{ 
         fontFamily: "'Inter', sans-serif",
         ...dotPatternStyle,
-        backgroundColor: "#598bd9",
+        backgroundColor: "#60A5FA",
         backgroundAttachment: "fixed"
       }}
     >
       <div className="flex h-screen w-full">
         {/* Header */}
-        <div className="flex-1 flex flex-col bg-[#598bd9]">
+        <div className="flex-1 flex flex-col style={{ backgroundColor: '#598bd9' }}">
           <div className="p-4  bg-[#598bd9]">
           <div className="flex justify-center w-full">
               <div className="inline-block bg-yellow-300 px-6 py-2 rounded-lg border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-2">
