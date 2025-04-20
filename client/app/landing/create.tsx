@@ -1,4 +1,5 @@
 'use client';
+
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
@@ -40,26 +41,26 @@ const CreateButton: React.FC = () => {
     // Navigate after a slight delay for emoji effect
     setTimeout(() => {
       router.push('/user-input');
-    }, 800); // Increased delay to see more of the animation
+    }, 800); 
   };
 
   return (
-    <div className="py-8 flex items-center justify-center bg-500 ">
+    <div className="py-7 flex items-center justify-center bg-[#598bd9] w-full">
       <div className="relative">
         {emojis.map((item) => (
           <motion.div
             key={item.id}
             initial={{ opacity: 1, scale: 1, x: item.x, y: item.y }}
-            animate={{ 
+            animate={{
               opacity: 0,
               scale: 0.5,
               x: item.direction.x,
               y: item.direction.y,
               rotate: Math.random() * 360 // Random rotation
             }}
-            transition={{ 
-              duration: 1.5, 
-              ease: "easeOut" 
+            transition={{
+              duration: 1.5,
+              ease: "easeOut"
             }}
             className="absolute text-2xl pointer-events-none"
             style={{ left: '50%', top: '50%' }}
@@ -74,12 +75,10 @@ const CreateButton: React.FC = () => {
         <motion.button
           onClick={handleClick}
           className="relative group"
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: 'easeOut' }}
-          viewport={{ once: true }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.98 }}
         >
-          <div className="relative bg-yellow-300 border-3 border-black rounded-2xl p-3 shadow-lg transform hover:scale-105 transition-transform duration-200">
+          <div className="relative bg-yellow-300 border-3 border-black rounded-2xl p-3 shadow-lg transform transition-transform duration-200">
             <div className="absolute h-8 w-8 bg-yellow-300 border-r-3 border-b-3 border-black transform rotate-45 -bottom-4 left-10 z-0"></div>
             
             <h2 className="font-bangers text-3xl text-black tracking-wide">Try out your own story!</h2>
