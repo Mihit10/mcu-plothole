@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { Search, SendHorizontal, Sparkles, Zap } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -9,12 +9,20 @@ import { Card } from "@/components/ui/card"
 
 interface MainQueryProps {
   className?: string
+  redirect?: boolean
+  requery?: string
 }
 
-export default function MainQuery({ className }: MainQueryProps) {
+export default function MainQuery({ className, redirect = false, requery = "" }: MainQueryProps) {
   const [query, setQuery] = useState("")
   const [response, setResponse] = useState<string | null>(null)
   const [isTyping, setIsTyping] = useState(false)
+
+  useEffect(() => {
+    if (redirect && requery) {
+      setQuery(requery)
+    }
+  }, [redirect, requery])
 
   const mockResponses: Record<string, string> = {
     default: `**Thanks for your theory!**  
@@ -177,18 +185,17 @@ Keep this between us, Agent. 🕵️‍♀️`
                 </div>
 
                 <div className="mt-6 flex justify-end">
-                <Button
+                  <Button
                     variant="outline"
                     onClick={() => {
-                        const googleQuery = encodeURIComponent(`${query} marvel theory`)
-                        window.open(`https://www.google.com/search?q=${googleQuery}`, "_blank")
+                      const googleQuery = encodeURIComponent(`${query} marvel theory`)
+                      window.open(`https://www.google.com/search?q=${googleQuery}`, "_blank")
                     }}
                     className="border-2 border-yellow-500 text-yellow-300 hover:bg-yellow-500/10 font-comic text-sm rounded-full px-4 py-2 transition-all duration-200"
-                    >
+                  >
                     <Search className="mr-2 h-4 w-4" />
                     Explore Related Theories
-                </Button>
-
+                  </Button>
                 </div>
               </Card>
             </motion.div>
@@ -198,3 +205,4 @@ Keep this between us, Agent. 🕵️‍♀️`
     </div>
   )
 }
+    

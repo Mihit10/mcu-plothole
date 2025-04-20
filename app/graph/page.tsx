@@ -1,9 +1,13 @@
 "use client"
 import MCUGraph from '@/components/main-graph';
 import MainQuery from '@/components/main-query';
+import { useSearchParams } from "next/navigation"
 
 // Your page component
 export default function GraphPage() {
+    const searchParams = useSearchParams()
+    const redirect = searchParams.get("redirect") === "true"
+    const requery = searchParams.get("requery") || ""
   // Your data fetching logic here
   const graphData = [
     {
@@ -2285,7 +2289,7 @@ export default function GraphPage() {
   return (
     <div className="p-4">
       <MCUGraph data={graphData} className="w-full" />
-      <MainQuery />
+      <MainQuery redirect={redirect} requery={requery} />
     </div>
   );
 }
