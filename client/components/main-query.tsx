@@ -7,18 +7,22 @@ import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Card } from "@/components/ui/card"
 import Markdown from 'react-markdown'
+import { useRouter } from "next/navigation"
+
 
 interface MainQueryProps {
   className?: string
   redirect?: boolean
   requery?: string
-  onQuerySent?: () => void;
+  onQuerySent?: (query: string) => void;
 }
 
 export default function MainQuery({ className, redirect = false, requery = "", onQuerySent }: MainQueryProps) {
   const [query, setQuery] = useState("")
   const [response, setResponse] = useState<string | null>(null)
   const [isTyping, setIsTyping] = useState(false)
+  const router = useRouter()  
+
 
   useEffect(() => {
     if (redirect && requery) {
@@ -33,6 +37,8 @@ export default function MainQuery({ className, redirect = false, requery = "", o
   
     setResponse(null);
     setIsTyping(true);
+    const encodedQuery = encodeURIComponent(`${query}`);
+    router.push(`/graph?redirect=true&requery=${query}`);
   
     try {
       const res = await fetch("https://rhino-frank-tightly.ngrok-free.app/validate", {
@@ -41,21 +47,19 @@ export default function MainQuery({ className, redirect = false, requery = "", o
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          prompt: "default", // or pass query itself if backend handles it
+          prompt: query, // Send the current query for validation
           theory: query,
         }),
       });
       const data = await res.json();
       const markdownText = data.result;
   
-      // const text = await res.text();
       setTimeout(() => {
         setIsTyping(false);
-        setResponse(markdownText); // parsed from response.result
+        setResponse(markdownText);
       }, 1500);
-      
   
-      onQuerySent?.();
+      onQuerySent?.(query); // Pass the current 'query' here
     } catch (error) {
       console.error("Error fetching response:", error);
       setIsTyping(false);
