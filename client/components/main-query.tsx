@@ -6,6 +6,7 @@ import { Search, SendHorizontal, Sparkles, Zap } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Card } from "@/components/ui/card"
+import Markdown from 'react-markdown'
 
 interface MainQueryProps {
   className?: string
@@ -25,81 +26,44 @@ export default function MainQuery({ className, redirect = false, requery = "", o
     }
   }, [redirect, requery])
 
-  const mockResponses: Record<string, string> = {
-    default: `**Thanks for your theory!**  
-The multiverse is indeed complex, but this opens up fascinating possibilities for future storylines.  
-*Keep exploring the cosmic possibilities!* ✨`,
+  
 
-    timeline: `## Timeline Analysis
-
-Your question touches on a fascinating timeline anomaly!  
-The Sacred Timeline has multiple branches that create what we call **nexus events**.  
-
-According to the TVA records, this particular event you're curious about happens in what we call a *branch reality* — not quite our main MCU timeline.  
-
-🕰️ *Remember: "Time works differently in the TVA!"*`,
-
-    infinity: `## Infinity Stone Theory
-
-**FASCINATING THEORY!** 💫
-
-The Infinity Stones do indeed work differently across dimensions.  
-In Earth-616 (our main MCU reality), the stones have specific powers,  
-but your theory about their interconnection is actually supported by evidence in *Loki* Season 1!
-
-The Time Stone and Space Stone particularly have shown unusual interactions — exactly as you've described.  
-This could explain why Doctor Strange saw **14,000,605 futures**!`,
-
-    kang: `## Kang Analysis
-
-⚡ **MULTIVERSE ALERT!** ⚡
-
-Your Kang theory touches on something crucial!  
-As a being who exists across timelines, Kang's variants are indeed connected through quantum entanglement.
-
-The Council of Kangs exists *outside conventional time*,  
-and your theory about how He Who Remains connects to Rama-Tut is **eerily accurate**.  
-
-Marvel Studios might be heading exactly where you're thinking for **Phase 6**!`,
-
-    secret: `## CLASSIFIED INFORMATION
-
-*The file you're attempting to access has been restricted by order of Director Fury.*
-
-\`\`\`
-SHIELD CLEARANCE LEVEL 9 REQUIRED
-\`\`\`
-
-Your theory touches on something we're not supposed to talk about yet...  
-But between us, you might be onto something big for **Phase 5's conclusion**.  
-Keep this between us, Agent. 🕵️‍♀️`
-  }
-
-  const handleSubmit = () => {
-    if (!query.trim()) return
-
-    setResponse(null)
-    setIsTyping(true)
-
-    let selectedResponse = mockResponses.default
-    const queryLower = query.toLowerCase()
-
-    if (queryLower.includes("timeline") || queryLower.includes("multiverse") || queryLower.includes("branch")) {
-      selectedResponse = mockResponses.timeline
-    } else if (queryLower.includes("infinity") || queryLower.includes("stone") || queryLower.includes("thanos")) {
-      selectedResponse = mockResponses.infinity
-    } else if (queryLower.includes("kang") || queryLower.includes("conqueror") || queryLower.includes("he who remains")) {
-      selectedResponse = mockResponses.kang
-    } else if (queryLower.includes("secret") || queryLower.includes("spoiler") || queryLower.includes("leak")) {
-      selectedResponse = mockResponses.secret
+  const handleSubmit = async () => {
+    if (!query.trim()) return;
+  
+    setResponse(null);
+    setIsTyping(true);
+  
+    try {
+      const res = await fetch("https://rhino-frank-tightly.ngrok-free.app/validate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          prompt: "default", // or pass query itself if backend handles it
+          theory: query,
+        }),
+      });
+      const data = await res.json();
+      const markdownText = data.result;
+  
+      // const text = await res.text();
+      setTimeout(() => {
+        setIsTyping(false);
+        setResponse(markdownText); // parsed from response.result
+      }, 1500);
+      
+  
+      onQuerySent?.();
+    } catch (error) {
+      console.error("Error fetching response:", error);
+      setIsTyping(false);
+      setResponse("Oops! Something went wrong. Try again later.");
     }
-
-    setTimeout(() => {
-      setIsTyping(false)
-      setResponse(selectedResponse)
-    }, 1500)
-    onQuerySent?.();
-  }
+  };
+  
+  
 
   return (
     <div className={`w-full ${className}`}>
@@ -183,7 +147,7 @@ Keep this between us, Agent. 🕵️‍♀️`
                 </div>
 
                 <div className="bg-purple-900 border-2 border-yellow-500 rounded-lg p-4 text-white font-comic whitespace-pre-wrap text-base leading-relaxed shadow-md shadow-yellow-500/20">
-                  {response}
+                <Markdown>{response}</Markdown>
                 </div>
 
                 <div className="mt-6 flex justify-end">
@@ -193,7 +157,7 @@ Keep this between us, Agent. 🕵️‍♀️`
                       const googleQuery = encodeURIComponent(`${query} marvel theory`)
                       window.open(`https://www.google.com/search?q=${googleQuery}`, "_blank")
                     }}
-                    className="border-2 border-yellow-500 text-yellow-300 hover:bg-yellow-500/10 font-comic text-sm rounded-full px-4 py-2 transition-all duration-200"
+                    className="border-2 border-yellow-500 text-slate-900 hover:bg-yellow-500/10 font-comic text-sm rounded-full px-4 py-2 transition-all duration-200"
                   >
                     <Search className="mr-2 h-4 w-4" />
                     Explore Related Theories
