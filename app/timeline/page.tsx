@@ -121,92 +121,92 @@ export default function HomePage() {
               </TabsList>
             </div>
 
-            <TabsContent value="timeline" className="flex-1 p-6 pt-4 overflow-auto">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <AnimatePresence>
-                  {filteredEvents.map((event, index) => (
-                    <motion.div
-                      key={event.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.9 }}
-                      transition={{ duration: 0.3, delay: index * 0.05 }}
-                      className={`bg-zinc-800 rounded-lg overflow-hidden border-4 ${getEventBorderColor(event.type)} relative`}
-                    >
-                      {/* Comic book halftone texture */}
-                      <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle,_transparent_20%,_black_70%)] bg-[length:4px_4px] opacity-10 pointer-events-none"></div>
+            <TabsContent value="timeline" className="flex-1 p-6 pt-4 overflow-auto bg-blue-300">
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <AnimatePresence>
+      {filteredEvents.map((event, index) => (
+        <motion.div
+          key={event.id}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.9 }}
+          transition={{ duration: 0.3, delay: index * 0.05 }}
+          className="bg-white rounded-lg overflow-hidden border-2 border-black relative shadow-lg"
+        >
+          {/* Event image */}
+          <div
+            className="h-48 bg-cover bg-center relative"
+            style={{ backgroundImage: `url(${event.image || "/placeholder.svg?height=300&width=500"})` }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-70"></div>
 
-                      {/* Event image */}
-                      <div
-                        className="h-48 bg-cover bg-center relative"
-                        style={{ backgroundImage: `url(${event.image || "/placeholder.svg?height=300&width=500"})` }}
-                      >
-                        <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 to-transparent"></div>
-
-                        <div className="absolute bottom-0 left-0 p-4 w-full">
-                          <div
-                            className={`inline-block px-2 py-1 rounded font-comic text-sm ${getEventBadgeColor(event.type)}`}
-                          >
-                            {event.type}
-                          </div>
-                          <h3 className="text-xl font-bold mt-2 text-white font-comic drop-shadow-md">{event.title}</h3>
-                        </div>
-                      </div>
-
-                      <div className="p-4">
-                        <div className="flex items-center text-zinc-400 text-sm mb-3 space-x-4">
-                          <div className="flex items-center">
-                            <span>{event.year}</span>
-                          </div>
-
-                          <div className="flex items-center">
-                            <span>{event.location}</span>
-                          </div>
-
-                          {event.universe && (
-                            <div className="flex items-center">
-                              <span>{event.universe}</span>
-                            </div>
-                          )}
-                        </div>
-
-                        <p className="text-zinc-300 mb-4 font-comic">{event.description}</p>
-
-                        {event.characters.length > 0 && (
-                          <div className="mt-3">
-                            <div className="text-sm text-zinc-400 mb-2">Characters:</div>
-                            <div className="flex flex-wrap gap-2">
-                              {event.characters.map((character) => (
-                                <Button
-                                  key={character}
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => setSelectedCharacter(character)}
-                                  className="bg-zinc-700 hover:bg-zinc-600 text-zinc-200 border-zinc-600 font-comic text-xs"
-                                >
-                                  {character}
-                                </Button>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-
-                {filteredEvents.length === 0 && (
-                  <motion.div
-                    className="col-span-full text-center py-20 text-2xl font-comic text-zinc-500"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.5 }}
-                  >
-                    No events found for this criteria. Try adjusting your search or year selection.
-                  </motion.div>
-                )}
+            <div className="absolute top-3 left-3">
+              <div
+                className="inline-block px-2 py-1 rounded font-comic text-sm bg-blue-500 text-white border border-black"
+              >
+                {event.type}
               </div>
-            </TabsContent>
+            </div>
+
+            <div className="absolute bottom-0 left-0 p-4 w-full">
+              <h3 className="text-xl font-bold text-white font-comic drop-shadow-md">{event.title}</h3>
+            </div>
+          </div>
+
+          <div className="p-4">
+            <div className="flex items-center text-gray-600 text-sm mb-3 space-x-4 border-b border-gray-200 pb-2">
+              <div className="flex items-center">
+                <span>{event.year}</span>
+              </div>
+
+              <div className="flex items-center">
+                <span>{event.location}</span>
+              </div>
+
+              {event.universe && (
+                <div className="flex items-center">
+                  <span>{event.universe}</span>
+                </div>
+              )}
+            </div>
+
+            <p className="text-gray-800 mb-4 font-comic">{event.description}</p>
+
+            {event.characters.length > 0 && (
+              <div className="mt-3">
+                <div className="text-sm text-gray-600 mb-2">Characters:</div>
+                <div className="flex flex-wrap gap-2">
+                  {event.characters.map((character) => (
+                    <Button
+                      key={character}
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setSelectedCharacter(character)}
+                      className="bg-gray-200 hover:bg-gray-300 text-gray-800 border-gray-400 font-comic text-xs"
+                    >
+                      {character}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </motion.div>
+      ))}
+    </AnimatePresence>
+
+    {filteredEvents.length === 0 && (
+      <motion.div
+        className="col-span-full text-center py-20 text-2xl font-comic text-gray-700 bg-white rounded-lg border-2 border-black shadow-lg"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
+        No events found for this criteria. Try adjusting your search or year selection.
+      </motion.div>
+    )}
+  </div>
+</TabsContent>
 
             <TabsContent value="knowledge" className="flex-1 p-6 pt-4 overflow-auto">
               <KnowledgeGraph

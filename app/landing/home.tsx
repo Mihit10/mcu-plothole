@@ -66,7 +66,7 @@ export default function Home() {
       <div className="flex h-screen w-full">
         {/* Header */}
         <div className="flex-1 flex flex-col bg-[#598bd9]">
-          <div className="p-4 border-b-2 border-black bg-[#598bd9]">
+          <div className="p-4  bg-[#598bd9]">
           <div className="flex justify-center w-full">
               <div className="inline-block bg-yellow-300 px-6 py-2 rounded-lg border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-2">
                 <h1 className="text-4xl font-bold text-center text-black" style={{ fontFamily: "'Bangers', cursive" }}>The Multiversal Tracker</h1>

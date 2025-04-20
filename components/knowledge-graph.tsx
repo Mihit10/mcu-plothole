@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { ChevronLeft, ChevronRight, Info, Shield } from "lucide-react"
+import { ChevronLeft, ChevronRight, Info } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import type { Character, Event } from "@/lib/types"
 import { cn } from "@/lib/utils"
@@ -89,16 +89,33 @@ export default function TimelineGraph({
     return `hsl(${hue}, 70%, 60%)`
   }
 
+  // Get darker event colors for better contrast against the light background
+  function getEventColor(type: string): string {
+    switch (type) {
+      case "Canon":
+        return "#60A5FA" // blue-400
+      case "Theory":
+        return "#A78BFA" // purple-400
+      case "Retcon":
+        return "#FB923C" // orange-400
+      case "Rumor":
+        return "#F87171" // red-400
+      default:
+        return "#9CA3AF" // gray-400
+    }
+  }
+
   return (
-    <div className="relative h-full w-full bg-zinc-900 rounded-lg border-4 border-yellow-500 overflow-hidden font-comic">
+    <div className="relative h-full w-full bg-amber-50 rounded-lg border-4 border-yellow-500 overflow-hidden font-comic">
       {/* Comic-style background pattern */}
-      <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle,_transparent_20%,_black_70%)] bg-[length:4px_4px] opacity-10 pointer-events-none"></div>
+      <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle,_transparent_20%,_#FFEDD5_70%)] bg-[length:8px_8px] opacity-30 pointer-events-none"></div>
+      <div className="absolute top-0 left-0 w-full h-full" style={{background: "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100\" height=\"100\" viewBox=\"0 0 100 100\"><rect width=\"100\" height=\"100\" fill=\"none\" stroke=\"%23DDD6FE\" stroke-width=\"0.5\" stroke-dasharray=\"5,5\"/></svg>')"}}></div>
       
       {/* Title header */}
-      <div className="p-3 bg-gradient-to-r from-yellow-600 to-yellow-500 text-black font-bold flex items-center justify-between border-b-4 border-black">
-        <div className="flex items-center">
-          <Shield className="h-6 w-6 mr-2" />
-          {selectedYear ? `MCU Timeline: ${selectedYear}` : "MCU Timeline: All Events"}
+      <div className="p-3 bg-yellow-300 text-black font-bold flex items-center justify-between border-b-4 border-black shadow-md">
+        <div className="flex flex-col">
+          <div className="text-2xl font-black uppercase tracking-wide">MCU TIMELINE</div>
+          <div className="text-sm font-medium">Explore events year by year</div>
         </div>
         
         {/* Zoom controls */}
@@ -107,7 +124,7 @@ export default function TimelineGraph({
             variant="outline"
             size="sm"
             onClick={handleZoomOut}
-            className="bg-yellow-400 hover:bg-yellow-300 text-black border-black"
+            className="bg-yellow-400 hover:bg-yellow-300 text-black border-2 border-black font-bold shadow-md transform active:scale-95"
           >
             -
           </Button>
@@ -115,7 +132,7 @@ export default function TimelineGraph({
             variant="outline"
             size="sm"
             onClick={handleResetZoom}
-            className="bg-yellow-400 hover:bg-yellow-300 text-black border-black"
+            className="bg-yellow-400 hover:bg-yellow-300 text-black border-2 border-black font-bold shadow-md transform active:scale-95"
           >
             1x
           </Button>
@@ -123,7 +140,7 @@ export default function TimelineGraph({
             variant="outline"
             size="sm"
             onClick={handleZoomIn}
-            className="bg-yellow-400 hover:bg-yellow-300 text-black border-black"
+            className="bg-yellow-400 hover:bg-yellow-300 text-black border-2 border-black font-bold shadow-md transform active:scale-95"
           >
             +
           </Button>
@@ -135,7 +152,7 @@ export default function TimelineGraph({
         variant="outline"
         size="icon"
         onClick={() => handleScroll('left')}
-        className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-yellow-500 border-black text-black hover:bg-yellow-400"
+        className="absolute left-2 top-1/2 -translate-y-1/2 z-20 bg-yellow-500 border-2 border-black text-black hover:bg-yellow-400 shadow-md transform active:scale-95"
       >
         <ChevronLeft className="h-4 w-4" />
       </Button>
@@ -143,7 +160,7 @@ export default function TimelineGraph({
         variant="outline"
         size="icon"
         onClick={() => handleScroll('right')}
-        className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-yellow-500 border-black text-black hover:bg-yellow-400"
+        className="absolute right-2 top-1/2 -translate-y-1/2 z-20 bg-yellow-500 border-2 border-black text-black hover:bg-yellow-400 shadow-md transform active:scale-95"
       >
         <ChevronRight className="h-4 w-4" />
       </Button>
@@ -155,11 +172,11 @@ export default function TimelineGraph({
       >
         {/* Month labels */}
         {selectedYear && (
-          <div className="sticky top-0 z-10 flex border-b-2 border-yellow-500 bg-zinc-800 text-yellow-400 font-bold">
+          <div className="sticky top-0 z-10 flex border-b-2 border-yellow-600 bg-yellow-100 text-yellow-800 font-bold shadow-md">
             {Array.from({ length: visibleMonths.end - visibleMonths.start + 1 }, (_, i) => visibleMonths.start + i).map((month) => (
               <div 
                 key={month}
-                className="p-2 flex-none text-center border-r border-yellow-500/50"
+                className="p-2 flex-none text-center border-r border-yellow-600/50"
                 style={{ width: `${200 * zoomLevel}px` }}
               >
                 {getMonthName(month)}
@@ -170,29 +187,30 @@ export default function TimelineGraph({
 
         {/* Timeline content */}
         <div 
-          className="relative mt-4"
+          className="relative mt-4 px-4"
           style={{ 
-            minHeight: visibleEvents.length > 0 ? visibleEvents.length * 120 : 200,
+            minHeight: visibleEvents.length > 0 ? visibleEvents.length * 120 + 100 : 300,
             minWidth: selectedYear ? (visibleMonths.end - visibleMonths.start + 1) * 200 * zoomLevel : 1200 * zoomLevel
           }}
         >
           {/* Timeline center line */}
-          <div className="absolute left-0 right-0 h-2 top-1/2 -translate-y-1/2 bg-gradient-to-r from-yellow-600 via-yellow-500 to-yellow-600 z-0"></div>
+          <div className="absolute left-0 right-0 h-3 top-1/2 -translate-y-1/2 bg-gradient-to-r from-yellow-600 via-yellow-500 to-yellow-600 z-0 border-t-2 border-b-2 border-black"></div>
 
           {/* No events message */}
           {visibleEvents.length === 0 && (
-            <div className="absolute inset-0 flex items-center justify-center text-zinc-400 text-lg">
+            <div className="relative inset-0 flex items-center justify-center text-yellow-800 text-lg bg-yellow-100/50 rounded-lg m-8 border-2 border-dashed border-yellow-600">
               No events to display for {selectedYear ? `year ${selectedYear}` : "the selected filters"}
             </div>
           )}
 
-          {/* Event nodes */}
+          {/* Event nodes - Modified to remove rotation and animations */}
           {visibleEvents.map((event, index) => {
             const position = selectedYear 
               ? ((event.month - visibleMonths.start) / (visibleMonths.end - visibleMonths.start + 1)) * 100 
               : (index / (visibleEvents.length - 1 || 1)) * 100
             
-            const topPosition = index % 2 === 0 ? "15%" : "65%"
+            // Improved vertical spacing with alternating positions
+            const topPosition = index % 2 === 0 ? "20%" : "70%"
             const eventColor = getEventColor(event.type)
             
             return (
@@ -204,56 +222,57 @@ export default function TimelineGraph({
                 )}
                 style={{ 
                   left: `${position}%`,
-                  top: topPosition
+                  top: topPosition,
+                  maxWidth: "180px"
                 }}
                 onMouseEnter={() => setHoveredEvent(event)}
                 onMouseLeave={() => setHoveredEvent(null)}
               >
                 {/* Connection line to timeline */}
                 <div 
-                  className="absolute left-1/2 -translate-x-1/2 w-2 bg-gradient-to-b from-transparent via-zinc-300 to-zinc-300"
+                  className="absolute left-1/2 -translate-x-1/2 w-2 bg-gradient-to-b from-transparent via-yellow-600 to-yellow-600"
                   style={{
-                    top: topPosition === "15%" ? "100%" : "auto",
-                    bottom: topPosition === "65%" ? "100%" : "auto",
-                    height: "75px"
+                    top: topPosition === "20%" ? "100%" : "auto",
+                    bottom: topPosition === "70%" ? "100%" : "auto",
+                    height: "65px"
                   }}
                 ></div>
                 
-                {/* Event node */}
+                {/* Event card - Removed rotation and initial animation, kept hover effect */}
                 <motion.div
                   whileHover={{ scale: 1.05 }}
                   className={cn(
-                    "rounded-lg p-3 w-48 border-4 shadow-lg cursor-pointer",
+                    "rounded-lg p-3 border-4 shadow-lg",
                     hoveredEvent?.id === event.id ? "ring-4 ring-white" : ""
                   )}
                   style={{ 
                     backgroundColor: eventColor,
-                    borderColor: hoveredEvent?.id === event.id ? "white" : "black",
+                    borderColor: "black",
+                    boxShadow: "3px 3px 0 rgba(0,0,0,0.3)",
+                    width: "150px",
+                    overflow: "hidden"
                   }}
                 >
-                  <h3 className="font-bold text-black text-sm truncate">{event.title}</h3>
-                  <div className="text-xs text-black/80 mt-1">{event.location}</div>
+                  <h3 className="font-bold text-white text-sm truncate" style={{ textShadow: "1px 1px 0 rgba(0,0,0,0.5)" }}>{event.title}</h3>
+                  <div className="text-xs text-white mt-1" style={{ textShadow: "1px 1px 0 rgba(0,0,0,0.5)" }}>{event.location}</div>
                   
                   {/* Character tags */}
                   <div className="flex flex-wrap gap-1 mt-2">
-                    {event.characters.slice(0, 3).map((char) => (
+                    {event.characters.slice(0, 2).map((char) => (
                       <div
                         key={`${event.id}-${char}`}
-                        className="text-xs px-2 py-0.5 rounded-full bg-black/20 text-black font-bold cursor-pointer"
-                        style={{ borderBottom: `2px solid ${getCharacterColor(char)}` }}
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          onSelectCharacter(char)
+                        className="text-xs px-2 py-0.5 rounded-full bg-white/40 text-black font-bold"
+                        style={{ 
+                          borderBottom: `2px solid ${getCharacterColor(char)}`,
+                          boxShadow: "1px 1px 0 rgba(0,0,0,0.2)"
                         }}
-                        onMouseEnter={() => setHoveredCharacter(char)}
-                        onMouseLeave={() => setHoveredCharacter(null)}
                       >
                         {char}
                       </div>
                     ))}
-                    {event.characters.length > 3 && (
-                      <div className="text-xs px-2 py-0.5 rounded-full bg-black/20 text-black">
-                        +{event.characters.length - 3}
+                    {event.characters.length > 2 && (
+                      <div className="text-xs px-2 py-0.5 rounded-full bg-white/40 text-black font-bold">
+                        +{event.characters.length - 2}
                       </div>
                     )}
                   </div>
@@ -271,40 +290,39 @@ export default function TimelineGraph({
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
-            className="absolute bottom-4 left-4 w-72 bg-zinc-800 p-4 rounded-lg border-4 border-yellow-500 shadow-lg z-50"
+            className="absolute bottom-16 left-4 w-64 bg-white p-4 rounded-lg border-4 border-yellow-500 shadow-lg z-50"
+            style={{ 
+              boxShadow: "5px 5px 0 rgba(0,0,0,0.2)",
+              background: "white url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100\" height=\"100\" viewBox=\"0 0 100 100\"><rect width=\"100\" height=\"100\" fill=\"none\" stroke=\"%23FDBA74\" stroke-width=\"0.5\" stroke-dasharray=\"2,2\"/></svg>')"
+            }}
           >
             <div className="flex justify-between items-start">
-              <h3 className="font-bold text-yellow-400">{hoveredEvent.title}</h3>
+              <h3 className="font-bold text-yellow-800 text-sm">{hoveredEvent.title}</h3>
               <div 
-                className="w-6 h-6 rounded-full flex items-center justify-center"
+                className="w-6 h-6 rounded-full flex items-center justify-center border-2 border-black"
                 style={{ backgroundColor: getEventColor(hoveredEvent.type) }}
               >
-                <Info className="h-3 w-3 text-black" />
+                <Info className="h-3 w-3 text-white" />
               </div>
             </div>
             
-            <div className="text-xs text-zinc-400 mt-1">
+            <div className="text-xs text-yellow-700 mt-1">
               {hoveredEvent.year} • {getMonthName(hoveredEvent.month)} • {hoveredEvent.location}
             </div>
             
-            <p className="text-sm mt-2 text-zinc-300">{hoveredEvent.description}</p>
+            <p className="text-xs mt-2 text-yellow-900 bg-yellow-50/70 p-2 rounded border border-yellow-200">{hoveredEvent.description}</p>
             
             <div className="mt-3">
-              <div className="text-xs text-zinc-400 mb-1">Featured Characters:</div>
+              <div className="text-xs text-yellow-700 mb-1 font-bold">Featured Characters:</div>
               <div className="flex flex-wrap gap-1">
                 {hoveredEvent.characters.map((char) => (
                   <div
                     key={`popup-${char}`}
-                    className={cn(
-                      "text-xs px-2 py-0.5 rounded-full cursor-pointer transition-all",
-                      hoveredCharacter === char 
-                        ? "bg-yellow-500 text-black"
-                        : "bg-zinc-700 text-zinc-300 hover:bg-zinc-600"
-                    )}
-                    style={{ borderLeft: `3px solid ${getCharacterColor(char)}` }}
-                    onClick={() => onSelectCharacter(char)}
-                    onMouseEnter={() => setHoveredCharacter(char)}
-                    onMouseLeave={() => setHoveredCharacter(null)}
+                    className="text-xs px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-900"
+                    style={{ 
+                      borderLeft: `3px solid ${getCharacterColor(char)}`,
+                      boxShadow: "1px 1px 0 rgba(0,0,0,0.1)"
+                    }}
                   >
                     {char}
                   </div>
@@ -312,50 +330,34 @@ export default function TimelineGraph({
               </div>
             </div>
             
-            <div className="mt-3 text-xs text-zinc-400">
-              Universe: <span className="text-zinc-300">{hoveredEvent.universe}</span> • 
-              Type: <span className="text-zinc-300">{hoveredEvent.type}</span>
+            <div className="mt-3 text-xs text-yellow-700">
+              Universe: <span className="text-yellow-900 font-bold">{hoveredEvent.universe}</span> • 
+              Type: <span className="text-yellow-900 font-bold">{hoveredEvent.type}</span>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* Legend */}
-      <div className="absolute top-4 right-4 bg-zinc-800/90 p-3 rounded-md border-2 border-yellow-500 font-comic z-10">
-        <div className="text-sm text-yellow-400 mb-2">Event Types:</div>
+      <div className="absolute top-16 right-4 bg-white p-3 rounded-md border-2 border-yellow-500 font-comic z-10" style={{ boxShadow: "3px 3px 0 rgba(0,0,0,0.2)" }}>
+        <div className="text-sm text-yellow-800 mb-2 font-bold">Event Types:</div>
         <div className="flex items-center gap-2 mb-1">
-          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: getEventColor("Canon") }}></div>
-          <span className="text-xs">Canon</span>
+          <div className="w-3 h-3 rounded-full border border-black" style={{ backgroundColor: getEventColor("Canon") }}></div>
+          <span className="text-xs text-yellow-900">Canon</span>
         </div>
         <div className="flex items-center gap-2 mb-1">
-          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: getEventColor("Theory") }}></div>
-          <span className="text-xs">Theory</span>
+          <div className="w-3 h-3 rounded-full border border-black" style={{ backgroundColor: getEventColor("Theory") }}></div>
+          <span className="text-xs text-yellow-900">Theory</span>
         </div>
         <div className="flex items-center gap-2 mb-1">
-          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: getEventColor("Retcon") }}></div>
-          <span className="text-xs">Retcon</span>
+          <div className="w-3 h-3 rounded-full border border-black" style={{ backgroundColor: getEventColor("Retcon") }}></div>
+          <span className="text-xs text-yellow-900">Retcon</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: getEventColor("Rumor") }}></div>
-          <span className="text-xs">Rumor</span>
+          <div className="w-3 h-3 rounded-full border border-black" style={{ backgroundColor: getEventColor("Rumor") }}></div>
+          <span className="text-xs text-yellow-900">Rumor</span>
         </div>
       </div>
     </div>
   )
-}
-
-// Helper function to get event color - re-used from KnowledgeGraph
-function getEventColor(type: string): string {
-  switch (type) {
-    case "Canon":
-      return "#3B82F6" // blue-500
-    case "Theory":
-      return "#8B5CF6" // purple-500
-    case "Retcon":
-      return "#F97316" // orange-500
-    case "Rumor":
-      return "#EF4444" // red-500
-    default:
-      return "#6B7280" // gray-500
-  }
 }
