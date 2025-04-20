@@ -10,11 +10,23 @@ export default function UserInputPage() {
   const [file, setFile] = useState<File | null>(null);
   const [graphData, setGraphData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const uploadBackendUrl = "https://rhino-frank-tightly.ngrok-free.app/process_pdf"; // Define your backend URL here
+  const handleFileUploadComplete = (data: any) => {
+    console.log('File upload complete:', data);
+    setGraphData(data);
+    setIsLoading(false);
+  };
+
+  const handleFileUploadError = (error: any) => {
+    console.error('File upload failed:', error);
+    setIsLoading(false);
+  };
 
   const handleFileSelect = async (selectedFile: File | null) => {
     if (!selectedFile) return;
     setFile(selectedFile);
     setIsLoading(true);
+
 
     // Dummy API call to simulate PDF upload + backend parsing
     setTimeout(() => {
@@ -178,7 +190,12 @@ export default function UserInputPage() {
           transition={{ duration: 0.4, ease: 'easeOut' }}
         >
           {!file && (
-            <ComicFileUpload onFileSelect={handleFileSelect} />
+            <ComicFileUpload
+              onFileSelect={handleFileSelect}
+              uploadUrl={uploadBackendUrl} // Make sure uploadBackendUrl is defined in this component
+              onUploadComplete={handleFileUploadComplete} // If you want to handle completion here
+              onUploadError={handleFileUploadError}     // If you want to handle errors here
+/>
           )}
         </motion.div>
 

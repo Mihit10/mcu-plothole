@@ -3,31 +3,46 @@ import { FileIcon, UploadCloud, X, CheckCircle, AlertCircle } from 'lucide-react
 
 interface ComicFileUploadProps {
   onFileSelect?: (file: File | null) => void;
+  uploadUrl: string; // Add prop for the upload URL
+  onUploadComplete?: (data: any) => void; // Optional callback for successful upload
+  onUploadError?: (error: any) => void;   // Optional callback for upload error
 }
 
-const ComicFileUpload: React.FC<ComicFileUploadProps> = ({ onFileSelect }) => {
+const ComicFileUpload: React.FC<ComicFileUploadProps> = ({ onFileSelect, uploadUrl, onUploadComplete, onUploadError }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState('');
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [isUploading, setIsUploading] = useState(false); // State to track upload status
 
-  const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(true);
-  };
+  const handleUpload = async (fileToUpload: File) => {
+    setIsUploading(true);
+    const formData = new FormData();
+    formData.append('file', fileToUpload); // 'file' is the field name the backend expects
 
-  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(false);
-  };
+    try {
+      const response = await fetch(uploadUrl, {
+        method: 'POST',
+        body: formData,
+      });
 
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (!isDragging) {
-      setIsDragging(true);
+      if (response.ok) {
+        const data = await response.json(); // Or response.text() depending on your backend
+        setFile(fileToUpload);
+        setError('');
+        if (onFileSelect) onFileSelect(fileToUpload);
+        if (onUploadComplete) onUploadComplete(data);
+      } else {
+        const errorMessage = await response.text();
+        setError(`Upload failed: ${errorMessage}`);
+        if (onUploadError) onUploadError(errorMessage);
+      }
+    } catch (uploadError) {
+      console.error('Error uploading file:', uploadError);
+      setError(`Upload failed: ${uploadError}`);
+      if (onUploadError) onUploadError(uploadError);
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -38,22 +53,20 @@ const ComicFileUpload: React.FC<ComicFileUploadProps> = ({ onFileSelect }) => {
 
     const droppedFile = e.dataTransfer.files[0];
     if (validateFile(droppedFile)) {
-      setFile(droppedFile);
-      if (onFileSelect) onFileSelect(droppedFile);
+      handleUpload(droppedFile); // Initiate upload on drop
     }
   };
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0] ?? null; // Convert undefined to null
-  
+  const handleFileSelectInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0] ?? null;
+
     if (selectedFile && validateFile(selectedFile)) {
-      setFile(selectedFile);
-      if (onFileSelect) onFileSelect(selectedFile);
+      handleUpload(selectedFile); // Initiate upload on file selection
     } else {
-      setFile(null); // Optional: reset file state if no valid file
+      setFile(null);
+      if (onFileSelect) onFileSelect(null);
     }
-  };
-  
+  };  
 
   const validateFile = (file: File | null): boolean => {
     if (!file) return false;
@@ -102,18 +115,31 @@ const ComicFileUpload: React.FC<ComicFileUploadProps> = ({ onFileSelect }) => {
               boxShadow: '8px 8px 0px 0px rgba(0,0,0,0.75)',
               background: isDragging ? 'linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%)' : 'linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)'
             }}
-            onDragEnter={handleDragEnter}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
+            onDragEnter={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setIsDragging(true);
+            }}
+            onDragOver={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setIsDragging(true);
+            } }
+            onDragLeave={(e => {
+              e.preventDefault();
+              e.stopPropagation();
+              setIsDragging(false);
+            })}
             onDrop={handleDrop}
           >
             <input
-              ref={fileInputRef}
-              type="file"
-              accept=".pdf,application/pdf"
-              className="hidden"
-              onChange={handleFileSelect}
-            />
+            ref={fileInputRef}
+            type="file"
+            accept=".pdf,application/pdf"
+            className="hidden"
+            onChange={handleFileSelectInputChange} // Use the new handler
+            disabled={isUploading}
+          />
 
             {/* Comic style burst badge */}
             <div className="absolute top-0 right-0 transform translate-x-6 -translate-y-6">
