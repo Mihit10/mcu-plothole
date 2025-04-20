@@ -25,6 +25,7 @@ type Contradiction = {
 }
 
 type FanTheory = {
+  id: string
   title: string
   theory: string
   characters: string[]
