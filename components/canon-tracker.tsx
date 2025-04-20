@@ -36,6 +36,8 @@ type FanTheory = {
 export default function CanonTracker({ events, characters, multiverse }: CanonTrackerProps) {
   const [activeTab, setActiveTab] = useState("contradictions")
   const [filter, setFilter] = useState<"all" | "timeline" | "character" | "universe">("all")
+  const [showNewTheoryModal, setShowNewTheoryModal] = useState(false)
+
   const [theoryFilter, setTheoryFilter] = useState<string>("all")
   const router = useRouter()  
 
@@ -394,67 +396,87 @@ export default function CanonTracker({ events, characters, multiverse }: CanonTr
         </TabsContent>
 
         <TabsContent value="theories" className="flex-1">
-          <div className="mb-4 flex items-center justify-between">
-            <h3 className="text-xl font-bangers text-black">FAN THEORIES</h3>
-            <div className="flex items-center gap-2">
-              <span className="text-blue-900 text-base font-bold">Filter by Character:</span>
-              <select 
-                className="bg-purple-200 border-2 border-black rounded px-3 py-1 font-comic text-black"
-                value={theoryFilter}
-                onChange={(e) => setTheoryFilter(e.target.value)}
-              >
-                <option value="all">All Characters</option>
-                {uniqueCharacters.map(char => (
-                  <option key={char} value={char}>{char}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-1 gap-4">
-            {filteredTheories.map((theory, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-                className="bg-white border-4 border-black rounded-lg overflow-hidden shadow-lg transform -rotate-1"
-              >
-                <div className="bg-purple-400 p-3 border-b-4 border-black">
-                  <h3 className="text-xl font-bold font-comic text-black text-center">{theory.title}</h3>
-                </div>
-                <div className="p-4">
-                  <div className="flex items-start gap-3">
-                    <Star className="h-6 w-6 text-purple-600 mt-1 flex-shrink-0" />
-                    <div>
-                      <p className="text-black text-lg font-comic">{theory.theory}</p>
-                      
-                      <div className="mt-4">
-                        <div className="text-base text-blue-900 font-bold mb-2">Related Characters:</div>
-                        <div className="flex flex-wrap gap-1">
-                          {theory.characters.map((charName) => (
-                            <div
-                              key={charName}
-                              className="bg-yellow-200 px-3 py-1 rounded text-sm font-comic border-2 border-black text-black font-bold"
-                            >
-                              {charName}
-                            </div>
-                          ))}
-                        </div>
+  <div className="mb-4 flex items-center justify-between">
+    <div className="flex items-center gap-3">
+      <h3 className="text-xl font-bangers text-black">FAN THEORIES</h3>
+      <button 
+        className="bg-green-400 hover:bg-green-500 text-black font-comic font-bold py-1 px-3 rounded-md border-2 border-black shadow-md transition-colors"
+        onClick={() => setShowNewTheoryModal(true)}
+      >
+        + Add Theory
+      </button>
+    </div>
+    <div className="flex items-center gap-2">
+      <span className="text-blue-900 text-base font-bold">Filter by Character:</span>
+      <select 
+        className="bg-purple-200 border-2 border-black rounded px-3 py-1 font-comic text-black"
+        value={theoryFilter}
+        onChange={(e) => setTheoryFilter(e.target.value)}
+      >
+        <option value="all">All Characters</option>
+        {uniqueCharacters.map(char => (
+          <option key={char} value={char}>{char}</option>
+        ))}
+      </select>
+    </div>
+  </div>
+  
+  <div className="grid grid-cols-1 gap-4">
+    {filteredTheories.map((theory, index) => (
+      <motion.div
+        key={index}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+        className="bg-white border-4 border-black rounded-lg overflow-hidden shadow-lg transform -rotate-1"
+      >
+        <div className="bg-purple-400 p-3 border-b-4 border-black">
+          <h3 className="text-xl font-bold font-comic text-black text-center">{theory.title}</h3>
+        </div>
+        <div className="p-4">
+          <div className="flex items-start gap-3">
+            <Star className="h-6 w-6 text-purple-600 mt-1 flex-shrink-0" />
+            <div className="flex-1">
+              <p className="text-black text-lg font-comic">{theory.theory}</p>
+              
+              <div className="mt-4 flex flex-wrap justify-between items-end">
+                <div className="mb-2">
+                  <div className="text-base text-blue-900 font-bold mb-2">Related Characters:</div>
+                  <div className="flex flex-wrap gap-1">
+                    {theory.characters.map((charName) => (
+                      <div
+                        key={charName}
+                        className="bg-yellow-200 px-3 py-1 rounded text-sm font-comic border-2 border-black text-black font-bold"
+                      >
+                        {charName}
                       </div>
-                    </div>
+                    ))}
                   </div>
                 </div>
-              </motion.div>
-            ))}
-
-            {filteredTheories.length === 0 && (
-              <div className="text-center py-20 text-2xl font-comic text-blue-900 bg-white border-4 border-black rounded-lg">
-                No theories found for the selected character.
+                
+                <button
+                  onClick={() => {
+                    const requery = encodeURIComponent(`${theory.theory} — is this valid?`)
+                    router.push(`/graph?redirect=true&requery=${requery}`)
+                  }}
+                  className="bg-green-300 text-black font-comic font-bold py-2 px-4 border-2 border-black rounded shadow-md transform transition hover:bg-green-400"
+                >
+                  Validate Theory
+                </button>
               </div>
-            )}
+            </div>
           </div>
-        </TabsContent>
+        </div>
+      </motion.div>
+    ))}
+
+    {filteredTheories.length === 0 && (
+      <div className="text-center py-20 text-2xl font-comic text-blue-900 bg-white border-4 border-black rounded-lg">
+        No theories found for the selected character.
+      </div>
+    )}
+  </div>
+</TabsContent>
 
         <TabsContent value="retcons" className="flex-1">
           <div className="text-center py-20 text-2xl font-comic text-blue-900 bg-white border-4 border-black rounded-lg">

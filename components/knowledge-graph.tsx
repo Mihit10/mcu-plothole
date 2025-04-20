@@ -198,7 +198,7 @@ export default function TimelineGraph({
 
           {/* No events message */}
           {visibleEvents.length === 0 && (
-            <div className="relative inset-0 flex items-center justify-center text-yellow-800 text-lg bg-yellow-100/50 rounded-lg m-8 border-2 border-dashed border-yellow-600">
+            <div className="relative inset-0 flex items-center justify-center text-yellow-800 text-lg bg-yellow-200 rounded-lg m-8 border-2 border-dashed border-yellow-600">
               No events to display for {selectedYear ? `year ${selectedYear}` : "the selected filters"}
             </div>
           )}
