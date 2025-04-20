@@ -82,7 +82,7 @@ export default function HomePage() {
                   onClick={() => setIsChatOpen(!isChatOpen)}
                 >
                   <BrainCircuit className="mr-2 h-4 w-4" />
-                  AI Writer Assistant
+                  AI MCU Assistant
                 </Button>
               </div>
             </div>
