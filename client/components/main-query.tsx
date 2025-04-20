@@ -11,9 +11,10 @@ interface MainQueryProps {
   className?: string
   redirect?: boolean
   requery?: string
+  onQuerySent?: () => void;
 }
 
-export default function MainQuery({ className, redirect = false, requery = "" }: MainQueryProps) {
+export default function MainQuery({ className, redirect = false, requery = "", onQuerySent }: MainQueryProps) {
   const [query, setQuery] = useState("")
   const [response, setResponse] = useState<string | null>(null)
   const [isTyping, setIsTyping] = useState(false)
@@ -97,6 +98,7 @@ Keep this between us, Agent. 🕵️‍♀️`
       setIsTyping(false)
       setResponse(selectedResponse)
     }, 1500)
+    onQuerySent?.();
   }
 
   return (
