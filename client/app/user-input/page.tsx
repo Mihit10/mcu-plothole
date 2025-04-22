@@ -10,7 +10,7 @@ export default function UserInputPage() {
   const [file, setFile] = useState<File | null>(null);
   const [graphData, setGraphData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const uploadBackendUrl = "https://rhino-frank-tightly.ngrok-free.app/process_pdf"; // Define your backend URL here
+  const uploadBackendUrl = "http://127.0.0.1:5010/process_pdf"; // Define your backend URL here
   const handleFileUploadComplete = (data: any) => {
     console.log('File upload complete:', data);
     setGraphData(data);
